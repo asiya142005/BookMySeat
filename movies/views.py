@@ -122,7 +122,6 @@ def cancel_booking(request, booking_id):
     return redirect('profile')
 
 
-
 stripe.api_key = settings.STRIPE_SECRET_KEY
 @login_required
 def create_checkout_session(request):
@@ -132,6 +131,9 @@ def create_checkout_session(request):
 
     if seat_count == 0:
         return redirect('movie_list')
+    
+    success_url = request.build_absolute_uri('/movies/payment-success/?session_id={CHECKOUT_SESSION_ID}')
+    cancel_url = request.build_absolute_uri('/movies/payment-failed/')
 
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
@@ -146,9 +148,12 @@ def create_checkout_session(request):
             'quantity': seat_count,
         }],
         mode='payment',
-        success_url="http://127.0.0.1:8000/movies/payment-success/?session_id={CHECKOUT_SESSION_ID}",
-        #success_url="http://127.0.0.1:8000/movies/payment-success/",
-        cancel_url="http://127.0.0.1:8000/movies/payment-failed/",
+        # success_url="http://127.0.0.1:8000/movies/payment-success/?session_id={CHECKOUT_SESSION_ID}",
+        # #success_url="http://127.0.0.1:8000/movies/payment-success/",
+        # cancel_url="http://127.0.0.1:8000/movies/payment-failed/",
+
+        success_url = success_url,
+        cancel_url = cancel_url
 
     )
 
