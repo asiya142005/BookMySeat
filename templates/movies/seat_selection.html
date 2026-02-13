@@ -201,4 +201,38 @@
 </script>
 {% endif %}
 
+<!-- <script>
+  
+document.querySelectorAll('.seat input[type="checkbox"]').forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+        const seatDiv = this.closest('.seat');
+        if (this.checked) {
+            seatDiv.classList.add('selected');
+        } else {
+            seatDiv.classList.remove('selected');
+        }
+    });
+});
+</script> -->
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+    document.querySelectorAll('.seat input[type="checkbox"]').forEach(function(checkbox) {
+        checkbox.addEventListener('change', function() {
+            const seatDiv = this.closest('.seat');
+            if (this.checked) {
+                seatDiv.classList.add('selected');
+            } else {
+                seatDiv.classList.remove('selected');
+            }
+        });
+    });
+
+});
+</script>
+
+
+
+
 {% endblock %}

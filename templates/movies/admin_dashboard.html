@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <h1 class="text-center mb-4">🎬 Admin Dashboard</h1>
+
+    <!-- Top Cards -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card text-white bg-primary shadow">
+                <div class="card-body">
+                    <h5>Total Bookings</h5>
+                    <h3>{{ total_bookings }}</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card text-white bg-success shadow">
+                <div class="card-body">
+                    <h5>Total Revenue</h5>
+                    <h3>₹ {{ total_revenue }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular Movies -->
+    <div class="card mb-4 shadow">
+        <div class="card-header bg-dark text-white">
+            Most Popular Movies
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for movie in popular_movies %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ movie.movie__name }}
+                        <span class="badge bg-primary">
+                            {{ movie.total }} bookings
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No bookings yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Busiest Theaters -->
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            Busiest Theaters
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for theater in busiest_theaters %}
+                    <li class="list-group-item d-flex justify-content-between">
+                        {{ theater.theater__name }}
+                        <span class="badge bg-success">
+                            {{ theater.total }} bookings
+                        </span>
+                    </li>
+                {% empty %}
+                    <li class="list-group-item">No bookings yet</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

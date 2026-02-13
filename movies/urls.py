@@ -9,4 +9,6 @@ urlpatterns=[
     path("create-checkout-session/", views.create_checkout_session, name="create_checkout_session"),
     path("payment-success/", views.payment_success, name="payment_success"),
     path("payment-failed/", views.payment_failed, name="payment_failed"),
+
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
 ]

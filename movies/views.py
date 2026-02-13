@@ -10,6 +10,9 @@ from django.utils import timezone
 from datetime import timedelta
 from django.contrib import messages
 
+from django.db.models import Count, Sum
+from django.contrib.admin.views.decorators import staff_member_required
+
 
 def movie_list(request):
     release_expired_reservations()
@@ -124,6 +127,12 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 @login_required
 def create_checkout_session(request):
 
+    selected_seats = request.session.get('selected_seats', [])
+    seat_count = len(selected_seats)
+
+    if seat_count == 0:
+        return redirect('movie_list')
+
     session = stripe.checkout.Session.create(
         payment_method_types=['card'],
         line_items=[{
@@ -132,12 +141,13 @@ def create_checkout_session(request):
                 'product_data': {
                     'name': 'Movie Ticket',
                 },
-                'unit_amount': 50000,  # 500 rupees (amount in paise)
+                'unit_amount': 20000,  # 500 rupees (amount in paise)
             },
-            'quantity': 1,
+            'quantity': seat_count,
         }],
         mode='payment',
-        success_url="http://127.0.0.1:8000/movies/payment-success/",
+        success_url="http://127.0.0.1:8000/movies/payment-success/?session_id={CHECKOUT_SESSION_ID}",
+        #success_url="http://127.0.0.1:8000/movies/payment-success/",
         cancel_url="http://127.0.0.1:8000/movies/payment-failed/",
 
     )
@@ -147,6 +157,22 @@ def create_checkout_session(request):
 
 @login_required
 def payment_success(request):
+    session_id = request.GET.get('session_id')
+
+    if not session_id:
+        return redirect('movie_list')
+
+    try:
+        # 🔐 Verify with Stripe
+        checkout_session = stripe.checkout.Session.retrieve(session_id)
+    except Exception:
+        return redirect('movie_list')
+
+    # ❌ If payment not completed → do nothing
+    if checkout_session.payment_status != "paid":
+        return redirect('movie_list')
+    
+    
     seat_ids = request.session.get('selected_seats')
     theater_id = request.session.get('theater_id')
 
@@ -154,7 +180,6 @@ def payment_success(request):
         return redirect('movie_list')
 
     theater = get_object_or_404(Theater, id=theater_id)
-
     booked_seats = []
 
     for seat_id in seat_ids:
@@ -172,6 +197,7 @@ def payment_success(request):
             seat=seat,
             movie=theater.movie,
             theater=theater,
+            price=200
         )
 
         seat.is_booked = True
@@ -184,6 +210,8 @@ def payment_success(request):
     # 🧹 clear session
     request.session.pop('selected_seats', None)
     request.session.pop('theater_id', None)
+
+    request.session.pop('reservation_started_at', None)
 
     # 📧 SEND EMAIL NOW (AFTER PAYMENT)
     subject = "Booking Confirmed - BookMySeat"
@@ -215,7 +243,7 @@ def payment_success(request):
         "theater": theater
     })
 
-
+@login_required
 def payment_failed(request):
     seat_ids = request.session.get('selected_seats')
 
@@ -233,6 +261,7 @@ def payment_failed(request):
 
     request.session.pop('selected_seats', None)
     request.session.pop('theater_id', None)
+    request.session.pop('reservation_started_at', None)
 
     return render(request, "movies/failed.html")
 
@@ -251,11 +280,42 @@ def release_expired_reservations():
         reserved_at=None
     )
 
-
-
-
-
+@staff_member_required
+def admin_dashboard(request):
     
+    # 1️⃣ Total Revenue
+    total_revenue = Booking.objects.aggregate(
+        total=Sum('price')
+    )['total'] or 0
+
+    # 2️⃣ Most Popular Movies
+    popular_movies = (
+        Booking.objects
+        .values('movie__name')
+        .annotate(total_bookings=Count('id'))
+        .order_by('-total_bookings')[:5]
+    )
+
+    # 3️⃣ Busiest Theaters
+    busiest_theaters = (
+        Booking.objects
+        .values('theater__name')
+        .annotate(total_bookings=Count('id'))
+        .order_by('-total_bookings')[:5]
+    )
+
+    # 4️⃣ Total Bookings
+    total_bookings = Booking.objects.count()
+
+    context = {
+        'total_revenue': total_revenue,
+        'popular_movies': popular_movies,
+        'busiest_theaters': busiest_theaters,
+        'total_bookings': total_bookings,
+    }
+    
+    return render(request, 'movies/admin_dashboard.html', context)
+
 
 
 
