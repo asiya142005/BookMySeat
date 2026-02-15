@@ -15,15 +15,6 @@ import os
 import dj_database_url
 from django.contrib.auth import get_user_model
 
-if os.environ.get("CREATE_SUPERUSER") == "True":
-    User = get_user_model()
-    username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-    email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-    password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
-
-    if username and not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username, email, password)
-        
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -37,7 +28,7 @@ SECRET_KEY = 'django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv-4-f!r$lawptjzrwu
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.vercel.app']
+ALLOWED_HOSTS = ['.vercel.app', '.onrender.com',]
 #ALLOWED_HOSTS = ['*']
 
 
@@ -160,3 +151,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STRIPE_PUBLIC_KEY = "pk_test_51SyDBjCgrfZC9Yr2PTiGFWLA5f0pDhtWrY9TcdI7KMIcv61LBb5CsWpL3oOIekPuRpKMkdA0AYCrocrSzxBJYK8g00MaSFhc3a"
 STRIPE_SECRET_KEY = "sk_test_51SyDBjCgrfZC9Yr2vZuVFZxzeUt3LabjCpQbL1HH27ELY3r6ACJJcM3Tb7eneecsRsxO1A97SAPbRZRrRuf8KLId00juqT0cze"
 
+
+if os.environ.get("CREATE_SUPERUSER") == "True":
+    User = get_user_model()
+    username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
+    email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
+    password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
+
+    if username and not User.objects.filter(username=username).exists():
+        User.objects.create_superuser(username, email, password)
