@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
-from django.contrib.auth import get_user_model
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -152,11 +152,3 @@ STRIPE_PUBLIC_KEY = "pk_test_51SyDBjCgrfZC9Yr2PTiGFWLA5f0pDhtWrY9TcdI7KMIcv61LBb
 STRIPE_SECRET_KEY = "sk_test_51SyDBjCgrfZC9Yr2vZuVFZxzeUt3LabjCpQbL1HH27ELY3r6ACJJcM3Tb7eneecsRsxO1A97SAPbRZRrRuf8KLId00juqT0cze"
 
 
-if os.environ.get("CREATE_SUPERUSER") == "True":
-    User = get_user_model()
-    username = os.environ.get("DJANGO_SUPERUSER_USERNAME")
-    email = os.environ.get("DJANGO_SUPERUSER_EMAIL")
-    password = os.environ.get("DJANGO_SUPERUSER_PASSWORD")
-
-    if username and not User.objects.filter(username=username).exists():
-        User.objects.create_superuser(username, email, password)
