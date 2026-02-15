@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-c8aetlj(=vp90n@#yoc^&d(_6ivp(d!bv-4-f!r$lawptjzrwu'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app']
 #ALLOWED_HOSTS = ['*']
@@ -100,9 +100,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+DATABASES['default'] = dj_database_url.parse('postgresql://dajango_bookmyseat_user:GrIPLL5oONLuwr6kyCrvNliPa0bnCfi8@dpg-d67k45jnv86c739qmp8g-a.oregon-postgres.render.com/dajango_bookmyseat')
 # DATABASES['default'] = dj_database_url.parse('postgresql://django_bookmyshow_user:uF7eu2GnnDbqvUgYswCYpIS5TKTtsAUS@dpg-cshi84o8fa8c739dsme0-a.oregon-postgres.render.com/django_bookmyshow')
 # postgresql://dajango_bookmyseat_user:GrIPLL5oONLuwr6kyCrvNliPa0bnCfi8@dpg-d67k45jnv86c739qmp8g-a/dajango_bookmyseat
-DATABASES['default'] = dj_database_url.parse('postgresql://dajango_bookmyseat_user:GrIPLL5oONLuwr6kyCrvNliPa0bnCfi8@dpg-d67k45jnv86c739qmp8g-a/dajango_bookmyseat')
+#DATABASES['default'] = dj_database_url.parse('postgresql://dajango_bookmyseat_user:GrIPLL5oONLuwr6kyCrvNliPa0bnCfi8@dpg-d67k45jnv86c739qmp8g-a/dajango_bookmyseat')
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -137,8 +138,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = 'static/'
+#STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
